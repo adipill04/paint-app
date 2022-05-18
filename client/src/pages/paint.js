@@ -1,8 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Canvas
  from '../components/Canvas/Canvas';
 import ActionsBar from '../components/ActionsBar/ActionsBar'
 export default function Paint() {
+  //timer
+  const [isActive, setIsActive] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    let timer = null;
+    if(isActive){
+      timer = setInterval(() => {
+        setSeconds((seconds) => seconds + 1);
+      }, 1000);
+    }
+    return () => {
+      clearInterval(timer);
+    };
+  });
     const brushSizes = [4, 12, 30, 50];
     // tools state
     const [currentTool, setTool] = useState("Brush Tool")
@@ -10,12 +24,11 @@ export default function Paint() {
     const [currentBrushSize, setBrushSize] = useState(brushSizes[0]);
 
     function eraseCanvas () {
+        setIsActive(false);
+        setSeconds(0);
         const canvas = document.getElementById("canvas");
         const context = canvas.getContext('2d');
         context.clearRect(0, 0, canvas.width, canvas.height);
-
-        // context.fillStyle = "#ffffff";
-        // context.fillRect(0, 0, canvasAbsoluteWidth, canvasAbsoluteHeight);
     }
     
     function saveCanvas (drawingTitle) {
@@ -28,6 +41,7 @@ export default function Paint() {
             return
         } else {
           imageName = drawingTitle
+          setIsActive(false);
         }
         
         const dataURL = canvas.toDataURL();
@@ -56,6 +70,9 @@ export default function Paint() {
           arr.push(imgObject);
           localStorage.setItem("paintyImages", JSON.stringify(arr));
         }
+        // After saving the painting reset the timer and clear the canvas
+        setSeconds(0);
+        eraseCanvas();
       };
 
     return (
@@ -65,6 +82,8 @@ export default function Paint() {
         saveCanvas={saveCanvas}
         />
         <Canvas
+        timerStarted={isActive}
+        startTimer={setIsActive}
         currentTool={currentTool}
         currentBrushSize={currentBrushSize}
         currentBrushColor={currentBrushColor}

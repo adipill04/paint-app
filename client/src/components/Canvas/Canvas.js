@@ -40,7 +40,6 @@ export default function Canvas(props) {
     setCtx(newCTX);
     calculcateCanvasRelativeSize();
   }
-
   const [mousePressed, setMousePressed] = useState(false);
   let [canvasHovered, setCanvasHovered] = useState(true);
 
@@ -55,6 +54,15 @@ export default function Canvas(props) {
 
   const [canvasRelativeWidth, setCanvasRelativeWidth] = useState(0);
   const [canvasRelativeHeight, setCanvasRelativeHeight] = useState(0);
+
+  const timerStarted = props.timerStarted;
+  const startTimer = props.startTimer;
+  useEffect(() => {
+    if(mousePressed === true && timerStarted === false) {
+      console.log("The timer started");
+      startTimer(true);
+    }
+  }, [mousePressed, timerStarted, startTimer]);
 
   function handleMouseMove(e) {
     const rect = canvasRef.current.getBoundingClientRect();
