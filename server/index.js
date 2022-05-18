@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('./models/user');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
 
@@ -38,8 +39,29 @@ app.post('/api/login', async (req, res) => {
         email: req.body.email,
         password: req.body.password
     })
+    // TODO: Change jwt secret to something bigger
     if(user) {
-        return res.json({ user: true});
+        const token = jwt.sign({
+            email: req.body.email
+        }, 'secret123');
+        return res.json({ user: token});
+    } else {
+        return res.json({ error: 'Login failed' });
+    }
+    
+});
+
+app.get('/api/verify', async (req, res) => {
+    const token = req.headers['x-access-token'];
+    // TODO: Change jwt secret to something bigger
+    if(token) {
+        jwt.verify(token, 'secret123', (err, decoded) => {
+            if(err) {
+                console.log(err);
+                return res.json({ auth: false, message: 'Not a valid token!'})
+            }
+        })
+        return res.json({ auth: true, user: token});
     } else {
         return res.json({ error: 'Login failed' });
     }

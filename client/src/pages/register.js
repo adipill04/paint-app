@@ -19,7 +19,6 @@ export default function Register() {
         }).catch((error) => {
             console.log("ERROR: "+error);
         });
-        console.log("User has been registered with email: "+email+" password: "+password);
         
     };
   return (
