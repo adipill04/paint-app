@@ -24,6 +24,7 @@ export default function Canvas(props) {
   }, []);
 
   function setupCanvas() {
+    console.log("setting up canvas!!!");
     const canvas = canvasRef.current;
 
     canvas.style.backgroundColor = "white";
@@ -54,15 +55,17 @@ export default function Canvas(props) {
 
   const [canvasRelativeWidth, setCanvasRelativeWidth] = useState(0);
   const [canvasRelativeHeight, setCanvasRelativeHeight] = useState(0);
-
-  const timerStarted = props.timerStarted;
+  
+  const startedDrawing = props.startedDrawing;
+  const setStartedDrawing = props.setStartedDrawing;
   const startTimer = props.startTimer;
   useEffect(() => {
-    if(mousePressed === true && timerStarted === false) {
+    if (mousePressed === true && startedDrawing === false) {
       console.log("The timer started");
-      startTimer(true);
+      setStartedDrawing(true);
+      startTimer();
     }
-  }, [mousePressed, timerStarted, startTimer]);
+  }, [mousePressed, startTimer, startedDrawing, setStartedDrawing]);
 
   function handleMouseMove(e) {
     const rect = canvasRef.current.getBoundingClientRect();
