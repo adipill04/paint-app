@@ -64,7 +64,31 @@ export default function Canvas(props) {
       console.log("The timer started");
       setStartedDrawing(true);
       startTimer();
-    }
+      const canvas = canvasRef.current;
+      var video = document.querySelector("video");
+
+      var videoStream = canvas.captureStream(30);
+      var mediaRecorder = new MediaRecorder(videoStream);
+
+      var chunks = [];
+      mediaRecorder.ondataavailable = function(e) {
+        chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = function(e) {
+        var blob = new Blob(chunks, { 'type' : 'video/mp4' });
+        chunks = [];
+        var videoURL = URL.createObjectURL(blob);
+        video.src = videoURL;
+      };
+      mediaRecorder.ondataavailable = function(e) {
+        chunks.push(e.data);
+      };
+
+      mediaRecorder.start();
+      // setInterval(draw, 300);
+      setTimeout(function (){ mediaRecorder.stop(); }, 5000);
+          }
   }, [mousePressed, startTimer, startedDrawing, setStartedDrawing]);
 
   function handleMouseMove(e) {
@@ -154,6 +178,7 @@ export default function Canvas(props) {
         x={cursorX}
         y={cursorY}
       />
+      <video autoplay controls></video>
     </Container>
   );
 }

@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('./models/user');
 const jwt = require('jsonwebtoken');
+const Drawing = require('./models/drawing');
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
 
@@ -42,6 +43,7 @@ app.post('/api/login', async (req, res) => {
     // TODO: Change jwt secret to something bigger
     if(user) {
         const token = jwt.sign({
+            _id: user._id,
             email: req.body.email
         }, 'secret123');
         return res.json({ user: token});
@@ -66,6 +68,32 @@ app.get('/api/verify', async (req, res) => {
         return res.json({ error: 'Login failed' });
     }
     
+});
+
+app.post('/api/uploadDrawing', async (req, res) => {
+    /*
+    Get object id from db - pass that to the owner key
+    */
+    try {
+        const token = req.headers['x-access-token'];
+        const decodedJwt = jwt.decode(token);
+        let userId = decodedJwt['_id'];
+        console.log("userId: ", userId);
+        const { name, type, img } = req.body;
+        const drawing = new Drawing({
+            name, 
+            type,
+            img,
+            owner: userId,
+            createdAt: new Date()
+        });
+
+        const newDrawing = await drawing.save();
+        res.json({ message: 'Drawing uploaded successfully'});
+    } catch (err) {
+        console.log(err);
+        res.json({ error: 'Drawing upload failed!'})
+    }
 });
 
 // Start Server

@@ -3,6 +3,8 @@ import Canvas
  from '../components/Canvas/Canvas';
 import ActionsBar from '../components/ActionsBar/ActionsBar';
 import useCounter from '../hooks/useCounter';
+import axios from 'axios';
+
 export default function Paint() {
   const [startedDrawing, setStartedDrawing] = useState(false);
   //timer
@@ -59,11 +61,40 @@ export default function Paint() {
         arr.push(imgObject);
         localStorage.setItem("paintyImages", JSON.stringify(arr));
       }
+      uploadDrawing(imageName, 'public', seconds, dataURL);
       // After saving the painting reset the timer and clear the canvas
       clear();
       eraseCanvas();
       setStartedDrawing(false);
     };
+
+    function uploadDrawing(name, type, drawTime, imgData) {
+      const reqBody = {
+        name,
+        type,
+        img: imgData,
+        drawTime
+      }
+      console.log("getting access token: ", localStorage.getItem('paint-app-access-token'));
+      console.log("request body: ", reqBody);
+      axios.post('http://localhost:1337/api/uploadDrawing', reqBody,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': localStorage.getItem('paint-app-access-token')
+          }
+      }).then(response => {
+            const data = response.data;
+            if(data) {
+                console.log("Image upload successful!");
+            } else {
+                console.log("Image upload failed");
+            }
+            console.log("Image upload response: "+JSON.stringify(response));
+        }).catch((error) => {
+            console.log("ERROR: "+error);
+        });
+    }
 
   return (
     <>
