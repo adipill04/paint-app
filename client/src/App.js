@@ -16,15 +16,14 @@ function App() {
   const { loggedIn } = useAuth();
   return (
     <div className="App">
-      <div className="container">
         <BrowserRouter>
           <Navigation />
           <div>ARE WE LOGGED IN? : {loggedIn ? "true" : "false"}</div>
           <Routes>
-            <Route exact path="/" element={<Home />} />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/register" element={<Register />} />
             <Route element={<ProtectedRoutes/>}>
+              <Route exact path="/" element={<Home />} />
               <Route path="/paint" element={<Paint />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="gallery/:drawing" element={<Gallery />} />
@@ -32,7 +31,6 @@ function App() {
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </BrowserRouter>
-      </div>
     </div>
   );
 }

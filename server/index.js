@@ -71,9 +71,6 @@ app.get('/api/verify', async (req, res) => {
 });
 
 app.post('/api/uploadDrawing', async (req, res) => {
-    /*
-    Get object id from db - pass that to the owner key
-    */
     try {
         const token = req.headers['x-access-token'];
         const decodedJwt = jwt.decode(token);
@@ -93,6 +90,31 @@ app.post('/api/uploadDrawing', async (req, res) => {
     } catch (err) {
         console.log(err);
         res.json({ error: 'Drawing upload failed!'})
+    }
+});
+
+app.get('/api/getDrawings', async (req, res) => {
+    try {
+        const token = req.headers['x-access-token'];
+        const decodedJwt = jwt.decode(token);
+        let userId = decodedJwt['_id'];
+        let userDrawings = await Drawing.find({
+            owner: userId
+        }).exec();
+        userDrawings = userDrawings.map(userDrawing => ({
+            id: userDrawing._id,
+            name: userDrawing.name, 
+            src: userDrawing.img,
+            createdAt: userDrawing.createdAt
+        }));
+
+        res.json({ 
+            userDrawings,
+            otherDrawings: null,
+            success: 'Drawings fetched successfully'});
+    } catch (err) {
+        console.log(err);
+        res.json({ error: 'Drawings fetch failed!'})
     }
 });
 
