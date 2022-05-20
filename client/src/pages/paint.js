@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import Canvas
- from '../components/Canvas/Canvas';
+import Canvas from '../components/Canvas/Canvas.js';
 import ActionsBar from '../components/ActionsBar/ActionsBar';
 import useCounter from '../hooks/useCounter';
 import axios from 'axios';
+import PaintTools from '../components/PaintTools/PaintTools.js';
 
 export default function Paint() {
   const [startedDrawing, setStartedDrawing] = useState(false);
@@ -14,6 +14,24 @@ export default function Paint() {
   const [currentTool, setTool] = useState("Brush Tool")
   const [currentBrushColor, setBrushColor] = useState("#000000");
   const [currentBrushSize, setBrushSize] = useState(brushSizes[0]);
+
+  function changeTool (tool) {
+    if (tool === "Brush Tool") {
+      setTool(tool);
+      setBrushSize(brushSizes[1]);
+    }
+
+    if (tool === "Eraser Tool") {
+      setTool(tool);
+      setBrushColor("#ffffff");
+      setBrushSize(brushSizes[3])
+    }
+
+    if (tool === "Paint Bucket Tool") {
+      setTool(tool);
+      setBrushSize(brushSizes[0]); // ???? <--- not really needed ??
+    }
+  };
 
   function eraseCanvas () {
       clear();
@@ -101,6 +119,14 @@ export default function Paint() {
       <ActionsBar
       eraseCanvas={eraseCanvas}
       saveCanvas={saveCanvas}
+      />
+      <PaintTools
+        selectedColor={currentBrushColor}
+        currentTool={currentTool}
+        currentBrushSize={currentBrushSize}
+        selectBrushSize={setBrushSize}
+        selectBrushColor={setBrushColor}
+        changeTool={changeTool}
       />
       <Canvas
       startTimer={start}
