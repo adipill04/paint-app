@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import axios from 'axios';
 import  { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router';
 
 export default function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const registerUser = async (e) => {
         // Prevent default behavior of refreshing/redirecting from page on form submit
@@ -16,6 +18,7 @@ export default function Register() {
         axios.post('http://localhost:1337/api/register', reqBody)
         .then(response => {
             console.log("registerUser response: "+JSON.stringify(response));
+            navigate("/login");
         }).catch((error) => {
             console.log("ERROR: "+error);
         });

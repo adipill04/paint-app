@@ -93,6 +93,29 @@ app.post('/api/uploadDrawing', async (req, res) => {
     }
 });
 
+app.get('/api/drawing/:id', async (req, res) => {
+    try {
+        const token = req.headers['x-access-token'];
+        const decodedJwt = jwt.decode(token);
+        let userId = decodedJwt['_id'];
+        console.log("userId: ", userId);
+        let drawing = await Drawing.findOne({ _id: req.params.id, sharedWith: userId });
+        drawing = {
+            id: drawing._id,
+            name: drawing.name, 
+            src: drawing.img,
+            createdAt: drawing.createdAt
+        }
+        res.json({ 
+            drawing,
+            message: 'Drawing fetched successfully'
+        });
+    } catch (err) {
+        console.log(err);
+        res.json({ error: 'Drawing fetch failed!'});
+    }
+});
+
 app.get('/api/getDrawings', async (req, res) => {
     try {
         const token = req.headers['x-access-token'];
@@ -106,7 +129,7 @@ app.get('/api/getDrawings', async (req, res) => {
             name: userDrawing.name, 
             src: userDrawing.img,
             createdAt: userDrawing.createdAt
-        }));
+        })); 
 
         res.json({ 
             userDrawings,
