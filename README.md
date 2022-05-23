@@ -4,11 +4,16 @@ A MERN stack paint app
 ## How to use
 Note: Instructions are only verified with MacOS.
 
-Make sure you have mongodb-community installed
-```shell
-brew install mongodb-community
-brew services start mongodb-community
-```
+Make sure you have 
+- mongodb-community installed
+    ```shell
+    brew install mongodb-community
+    brew services start mongodb-community
+    ```
+- npm installed
+    ```shell
+    brew install node
+    ```
 You can install [MongoDB Compass](https://www.mongodb.com/try/download/compass) to view the collections for paint-app on a UI.
 
 Once in the project folder -
