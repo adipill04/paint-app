@@ -22,7 +22,6 @@ app.use(cors());
 
 // Routes
 app.post('/api/register', async (req, res) => {
-    console.log(req.body);
     try {
         await User.create({
             email: req.body.email,
@@ -46,7 +45,7 @@ app.post('/api/login', async (req, res) => {
             _id: user._id,
             email: req.body.email
         }, 'secret123');
-        return res.json({ user: token});
+        return res.json({ token: token, user: { email: req.body.email}});
     } else {
         return res.json({ error: 'Login failed' });
     }
@@ -58,12 +57,12 @@ app.post('/api/uploadDrawing', async (req, res) => {
         const token = req.headers['x-access-token'];
         const decodedJwt = jwt.decode(token);
         let userId = decodedJwt['_id'];
-        console.log("userId: ", userId);
-        const { name, type, img } = req.body;
+        const { name, type, img, drawTime } = req.body;
         const drawing = new Drawing({
             name, 
             type,
             img,
+            drawTime,
             owner: userId,
             createdAt: new Date()
         });
@@ -81,7 +80,6 @@ app.get('/api/drawing/:id', async (req, res) => {
         const token = req.headers['x-access-token'];
         const decodedJwt = jwt.decode(token);
         let userId = decodedJwt['_id'];
-        console.log("userId: ", userId);
         let drawing = await Drawing.findOne({ _id: req.params.id, sharedWith: userId });
         drawing = {
             id: drawing._id,
@@ -111,7 +109,8 @@ app.get('/api/getDrawings', async (req, res) => {
             id: userDrawing._id,
             name: userDrawing.name, 
             src: userDrawing.img,
-            createdAt: userDrawing.createdAt
+            createdAt: userDrawing.createdAt,
+            drawTime: userDrawing.drawTime
         })); 
 
         let otherDrawings = await Drawing.find({ 
@@ -129,7 +128,8 @@ app.get('/api/getDrawings', async (req, res) => {
             id: otherDrawing._id,
             name: otherDrawing.name, 
             src: otherDrawing.img,
-            createdAt: otherDrawing.createdAt
+            createdAt: otherDrawing.createdAt,
+            drawTime: otherDrawing.drawTime
         })); 
 
         res.json({ 

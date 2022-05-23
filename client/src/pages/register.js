@@ -17,7 +17,6 @@ export default function Register() {
         };
         axios.post('http://localhost:1337/api/register', reqBody)
         .then(response => {
-            console.log("registerUser response: "+JSON.stringify(response));
             navigate("/login");
         }).catch((error) => {
             console.log("ERROR: "+error);

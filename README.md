@@ -21,7 +21,7 @@ Information that should be present for each drawing:
 - [] Time it took to draw (from first stroke to sending the drawing).
 - [x] Thumbnail of the drawing itself.
 - [] show the user’s details
-- [] allow a user to delete their drawings
+- [x] allow a user to delete their drawings
 
 
 “Record” the drawing and “Replay” it at will -

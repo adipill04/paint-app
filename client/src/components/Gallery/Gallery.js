@@ -19,7 +19,6 @@ export default function DrawingBoard() {
                 "x-access-token": localStorage.getItem('paint-app-access-token')
             }
             }).then(response => {
-                console.log(response);
                 const { userDrawings, otherDrawings} = response.data;
                 setDrawings({ userDrawings, otherDrawings});
             }).catch((error) => {
@@ -29,7 +28,6 @@ export default function DrawingBoard() {
 
     function shareImage(id, type="private") {
         const userShareEmail = prompt("Enter user email to share with");
-        if(userShareEmail) console.log(userShareEmail);
         axios.post("http://localhost:1337/api/shareDrawing/", {
             userShareEmail: userShareEmail,
             drawingId: id
@@ -71,6 +69,7 @@ export default function DrawingBoard() {
             key={image.id}
             createdAt={image.createdAt}
             shareImage={shareImage}
+            drawTime={image.drawTime}
             deleteImage={deleteImage}
             />
         ));
@@ -87,15 +86,17 @@ export default function DrawingBoard() {
             id={image.id}
             key={image.id}
             createdAt={image.createdAt}
+            drawTime={image.drawTime}
             />
         ));
     }
     return (
     <div>
+        <span>The url for a drawing that is shared can be formed by appending <strong>id</strong> to the end of this placeholder url - {window.location.href}gallery/<strong>id</strong> </span>
         <h2>YOUR DRAWINGS</h2>
-        <Row>{userDrawingImgElements}</Row>
+        <Row>{userDrawingImgElements.length !== 0 ? userDrawingImgElements : <div>Please save a drawing to view it here!</div>}</Row>
         <h2>PUBLIC & SHARED DRAWINGS</h2>
-        <Row>{otherDrawingImgElements}</Row>
+        <Row>{otherDrawingImgElements.length !== 0 ? otherDrawingImgElements : <div>No public or shared drawings yet</div>}</Row>
     </div>
     );
 }

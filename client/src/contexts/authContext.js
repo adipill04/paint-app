@@ -18,7 +18,8 @@ const AuthProvider = (props) => {
         .then(response => {
             const data = response.data;
             if(data.user) {
-                localStorage.setItem('paint-app-access-token', data.user)
+                localStorage.setItem('paint-app-access-token', data.token);
+                localStorage.setItem('userData', JSON.stringify(data.user));
                 setLoggedIn(true);
             } else {
                 console.log("Login failed");

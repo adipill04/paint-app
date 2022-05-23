@@ -24,7 +24,6 @@ export default function Canvas(props) {
   }, []);
 
   function setupCanvas() {
-    console.log("setting up canvas!!!");
     const canvas = canvasRef.current;
 
     canvas.style.backgroundColor = "white";
@@ -61,7 +60,7 @@ export default function Canvas(props) {
   const startTimer = props.startTimer;
   useEffect(() => {
     if (mousePressed === true && startedDrawing === false) {
-      console.log("The timer started");
+      // console.log("The timer started");
       setStartedDrawing(true);
       startTimer();
       const canvas = canvasRef.current;

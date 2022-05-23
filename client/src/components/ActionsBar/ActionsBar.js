@@ -1,18 +1,42 @@
-import { Button } from "react-bootstrap";
-export default function ActionsBar(props) {
+import { Button, Form } from "react-bootstrap";
+import { useState } from "react";
 
+export default function ActionsBar(props) {
+  const [drawingType, setDrawingType] = useState('public');
     function eraseCanvas() {
       props.eraseCanvas();
     };
   
-    function saveCanvas() {
-      props.saveCanvas();
+    function saveCanvas(drawingType) {
+      props.saveCanvas(drawingType);
     }
   
     return (
       <div>
         <EraseCanvasButton eraseCanvas={eraseCanvas} />
-        <SaveCanvasButton saveCanvas={saveCanvas}/>
+        <SaveCanvasButton saveCanvas={() => saveCanvas(drawingType)}/>
+        <div>
+        <Form>
+          <Form.Check
+          inline
+          label="Public Drawing"
+          name="drawingType"
+          type="radio"
+          id="public"
+          checked={drawingType === 'public'}
+          onClick={() => setDrawingType('public')}
+        />
+          <Form.Check 
+            inline
+            label="Private Drawing"
+            name="drawingType"
+            type="radio"
+            id="private"
+            checked={drawingType === 'private'}
+            onClick={() => setDrawingType('private')}
+          />
+        </Form>
+        </div>
       </div>
     );
   }

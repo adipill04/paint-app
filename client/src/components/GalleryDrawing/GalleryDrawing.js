@@ -25,7 +25,8 @@ export default function GalleryDrawing (props) {
         width="100%"
       />
       <div className="name-pill">
-        created at: {props.createdAt}
+        <div>drawing time: {props.drawTime} seconds</div>
+        <div>created at: {props.createdAt}</div>
       </div>
       
       <ButtonGroup

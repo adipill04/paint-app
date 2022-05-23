@@ -14,6 +14,7 @@ export default function Paint() {
   const [currentTool, setTool] = useState("Brush Tool")
   const [currentBrushColor, setBrushColor] = useState("#000000");
   const [currentBrushSize, setBrushSize] = useState(brushSizes[0]);
+  const [drawingType, setDrawingType] = useState("private");
 
   function changeTool (tool) {
     if (tool === "Brush Tool") {
@@ -41,46 +42,14 @@ export default function Paint() {
       context.clearRect(0, 0, canvas.width, canvas.height);
   }
     
-  function saveCanvas (drawingTitle) {
+  function saveCanvas (drawingType) {
       const canvas = document.getElementById("canvas");
-  
-      let imageName
-      if (!drawingTitle) {
-        imageName = prompt("Assign a name to this image before saving it", "NewDrawing");
-        if (!imageName)
-          return
-      } else {
-        imageName = drawingTitle
-      }
+      let imageName = prompt("Assign a name to this image before saving it", "NewDrawing");
+      if (!imageName) return;
       
       const dataURL = canvas.toDataURL();
-  
-      // check for stored images
-      const galleryImages = JSON.parse(localStorage.getItem("paintyImages"));
-  
-      const imgID = galleryImages
-        ? galleryImages[galleryImages.length - 1].id + 1
-        : 0;
-  
-      // build image object
-      const imgObject = {
-        id: imgID,
-        src: dataURL,
-        name: imageName,
-        drawTime: seconds
-      };
-  
-      if (galleryImages) {
-        // add to array and store it back
-        galleryImages.push(imgObject);
-        localStorage.setItem("paintyImages", JSON.stringify(galleryImages));
-      } else {
-        // create an array
-        let arr = [];
-        arr.push(imgObject);
-        localStorage.setItem("paintyImages", JSON.stringify(arr));
-      }
-      uploadDrawing(imageName, 'private', seconds, dataURL);
+
+      uploadDrawing(imageName, drawingType, seconds, dataURL);
       // After saving the painting reset the timer and clear the canvas
       clear();
       eraseCanvas();
@@ -109,7 +78,6 @@ export default function Paint() {
             } else {
                 console.log("Image upload failed");
             }
-            console.log("Image upload response: "+JSON.stringify(response));
         }).catch((error) => {
             console.log("ERROR: "+error);
         });
