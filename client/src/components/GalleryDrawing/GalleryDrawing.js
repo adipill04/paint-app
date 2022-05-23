@@ -1,9 +1,9 @@
-import { useState } from "react";
 import "../../styles/components/GalleryDrawing.scss";
 
 export default function GalleryDrawing (props) {
 
   function shareImage () {
+    props.shareImage(props.id, props.type)
   }
 
   function deleteImage () {
@@ -15,9 +15,9 @@ export default function GalleryDrawing (props) {
       className="col-12 col-md-6 col-lg-4 mb-3 position-relative"
     >
       <div className="name-pill">
-        {props.name}
+        Name: {props.name}
       </div>
-
+      <span>id: {props.id}</span>
       <img
         alt={props.name}
         src={props.src} 
@@ -29,7 +29,10 @@ export default function GalleryDrawing (props) {
       </div>
       
       <ButtonGroup
-        shareImage={shareImage}
+        shareImage={props.shareImage ?
+          shareImage : 
+          undefined
+        }
         deleteImage={props.deleteImage ?
           deleteImage : 
           undefined
@@ -42,12 +45,16 @@ export default function GalleryDrawing (props) {
 function ButtonGroup (props) {
   return (
     <div>
-      <button className="btn btn-primary">
-        Share
-      </button>
-      <button className="btn btn-danger ms-1" onClick={props.deleteImage}>
-        Delete
-      </button>
+      {props.shareImage ?
+        <button className="btn btn-primary" onClick={props.shareImage}>
+          Share
+        </button> : null
+      }
+      {props.deleteImage ?
+        <button className="btn btn-danger ms-1" onClick={props.deleteImage}>
+          Delete
+        </button> : null
+      }
     </div>
   )
 }

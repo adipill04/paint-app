@@ -67,6 +67,7 @@ export default function Paint() {
         id: imgID,
         src: dataURL,
         name: imageName,
+        drawTime: seconds
       };
   
       if (galleryImages) {
@@ -79,7 +80,7 @@ export default function Paint() {
         arr.push(imgObject);
         localStorage.setItem("paintyImages", JSON.stringify(arr));
       }
-      uploadDrawing(imageName, 'public', seconds, dataURL);
+      uploadDrawing(imageName, 'private', seconds, dataURL);
       // After saving the painting reset the timer and clear the canvas
       clear();
       eraseCanvas();

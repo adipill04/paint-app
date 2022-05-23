@@ -6,7 +6,8 @@ const DrawingSchema = new mongoose.Schema({
     img: { type: String, required: true },
     sharedWith: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
     owner: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    drawTime: {type: Number}
 });
 
 module.exports = mongoose.model('Drawing', DrawingSchema);

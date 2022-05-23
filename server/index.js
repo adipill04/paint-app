@@ -53,23 +53,6 @@ app.post('/api/login', async (req, res) => {
     
 });
 
-app.get('/api/verify', async (req, res) => {
-    const token = req.headers['x-access-token'];
-    // TODO: Change jwt secret to something bigger
-    if(token) {
-        jwt.verify(token, 'secret123', (err, decoded) => {
-            if(err) {
-                console.log(err);
-                return res.json({ auth: false, message: 'Not a valid token!'})
-            }
-        })
-        return res.json({ auth: true, user: token});
-    } else {
-        return res.json({ error: 'Login failed' });
-    }
-    
-});
-
 app.post('/api/uploadDrawing', async (req, res) => {
     try {
         const token = req.headers['x-access-token'];
@@ -172,6 +155,23 @@ app.delete('/api/deleteDrawing/:drawingId', async (req, res) => {
         res.status(500).json(err);
     }
 });
+
+app.post('/api/shareDrawing', async (req, res) => {
+    try {
+        const user = await User.findOne({
+            email: req.body.userShareEmail,
+        })
+        Drawing.updateOne(
+            { _id: req.body.drawingId, type: "private" },
+            { $addToSet: { sharedWith: user._id } }
+        ).exec()
+        .then(() => res.status(200).json({ message: 'Drawing shared' }))
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+});
+
 
 // Start Server
 app.listen(PORT, () => {

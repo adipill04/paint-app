@@ -27,6 +27,17 @@ export default function DrawingBoard() {
         });
     };
 
+    function shareImage(id, type="private") {
+        const userShareEmail = prompt("Enter user email to share with");
+        if(userShareEmail) console.log(userShareEmail);
+        axios.post("http://localhost:1337/api/shareDrawing/", {
+            userShareEmail: userShareEmail,
+            drawingId: id
+        }).catch((error) => {
+            console.log("ERROR: "+error);
+        });
+    }
+
     function deleteImage(id) {
     // eslint-disable-next-line no-restricted-globals
     const confirmDelete = confirm(
@@ -59,6 +70,7 @@ export default function DrawingBoard() {
             id={image.id}
             key={image.id}
             createdAt={image.createdAt}
+            shareImage={shareImage}
             deleteImage={deleteImage}
             />
         ));
