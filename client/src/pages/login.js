@@ -20,6 +20,8 @@ export default function Login() {
         login(email, password);
         if(location.state?.from) {
             navigate(location.state.from);
+        } else {
+            navigate("/");
         }
     };
   return (
