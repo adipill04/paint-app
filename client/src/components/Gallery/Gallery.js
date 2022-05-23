@@ -27,42 +27,63 @@ export default function DrawingBoard() {
         });
     };
 
-    // function deleteImage(id) {
-    // // eslint-disable-next-line no-restricted-globals
-    // const confirmDelete = confirm(
-    //     "Are you sure you want to delete this image?"
-    // );
+    function deleteImage(id) {
+    // eslint-disable-next-line no-restricted-globals
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this image?"
+    );
 
-    // if (!confirmDelete) return;
-    // const updatedImages = JSON.parse(localStorage.getItem("paintyImages"));
+    if (!confirmDelete) return;
+    console.log("Deleting image with id: ", id);
+    axios.delete(`http://localhost:1337/api/deleteDrawing/${id}`, {
+        headers: {
+            'x-access-token': localStorage.getItem('paint-app-access-token')
+        }
+    }).then(() => {
+        const updatedUserDrawings = drawings.userDrawings.filter(item => item.id !== id)
+        setDrawings({...drawings, userDrawings: updatedUserDrawings});
+    }).catch((error) => {
+        console.log("ERROR: "+error);
+    });
+    }
 
-    // // find index of id
-    // const indexToDelete = updatedImages.findIndex((elem) => elem.id === id);
-
-    // // delete elem at that index
-    // updatedImages.splice(indexToDelete, 1);
-
-    // // update storage
-    // localStorage.setItem("paintyImages", JSON.stringify(updatedImages));
-
-    // setImages(updatedImages);
-    // }
-
-    let imageElements = (
+    let userDrawingImgElements = (
     <p className="text-light">Your saved drawings will appear here</p>
     );
     if (drawings.userDrawings) {
-    imageElements = drawings.userDrawings.reverse().map((image, index) => (
-        <GalleryDrawing
-        src={image.src}
-        alt={image.name}
-        name={image.name}
-        id={image.id}
-        key={index}
-        createdAt={image.createdAt}
-        // deleteImage={deleteImage}
-        />
-    ));
+        userDrawingImgElements = drawings.userDrawings.reverse().map((image, index) => (
+            <GalleryDrawing
+            src={image.src}
+            alt={image.name}
+            name={image.name}
+            id={image.id}
+            key={image.id}
+            createdAt={image.createdAt}
+            deleteImage={deleteImage}
+            />
+        ));
     }
-    return <Row>{imageElements}</Row>;
+    let otherDrawingImgElements = (
+        <p className="text-light">Public drawings and drawings that are shared with you will appear here!</p>
+        );
+    if (drawings.otherDrawings) {
+        otherDrawingImgElements = drawings.otherDrawings.reverse().map((image, index) => (
+            <GalleryDrawing
+            src={image.src}
+            alt={image.name}
+            name={image.name}
+            id={image.id}
+            key={image.id}
+            createdAt={image.createdAt}
+            />
+        ));
+    }
+    return (
+    <div>
+        <h2>YOUR DRAWINGS</h2>
+        <Row>{userDrawingImgElements}</Row>
+        <h2>PUBLIC & SHARED DRAWINGS</h2>
+        <Row>{otherDrawingImgElements}</Row>
+    </div>
+    );
 }

@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '../contexts/authContext';
 import { useLocation, useNavigate } from 'react-router';
 
 export default function Login() {
     const location = useLocation();
-    const { login } = useAuth();
+    const { loggedIn, login } = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    useEffect(() => {
+        if(loggedIn && location.state?.from) navigate(location.state.from);
+    }, [loggedIn]);
 
     const handleLogin = async (e) => {
         // Prevent default behavior of refreshing/redirecting from page on form submit

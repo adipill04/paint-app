@@ -131,13 +131,45 @@ app.get('/api/getDrawings', async (req, res) => {
             createdAt: userDrawing.createdAt
         })); 
 
+        let otherDrawings = await Drawing.find({ 
+            $and: [
+                {
+                    $or: [
+                        { type: "public" }, 
+                        { type: "private", sharedWith: userId }
+                    ],
+                },
+                { owner: { $ne: userId }}
+            ] 
+        }).exec();
+        otherDrawings = otherDrawings.map(otherDrawing => ({
+            id: otherDrawing._id,
+            name: otherDrawing.name, 
+            src: otherDrawing.img,
+            createdAt: otherDrawing.createdAt
+        })); 
+
         res.json({ 
             userDrawings,
-            otherDrawings: null,
+            otherDrawings,
             success: 'Drawings fetched successfully'});
     } catch (err) {
         console.log(err);
         res.json({ error: 'Drawings fetch failed!'})
+    }
+});
+
+app.delete('/api/deleteDrawing/:drawingId', async (req, res) => {
+    try {
+        const token = req.headers['x-access-token'];
+        const decodedJwt = jwt.decode(token);
+        let userId = decodedJwt['_id'];
+        Drawing.findOneAndDelete({ _id: req.params.drawingId, owner: userId })
+        .exec()
+        .then(() => res.status(200).json({ message: 'Drawing deleted' }))
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
     }
 });
 

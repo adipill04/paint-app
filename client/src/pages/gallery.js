@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const Gallery = (props) => {
+const Gallery = () => {
 
   let { drawingId } = useParams(); 
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,6 @@ function getDrawings() {
             "x-access-token": localStorage.getItem('paint-app-access-token')
         }
         }).then(response => {
-            console.log(response);
             const { drawing } = response.data;
             setDrawing(drawing);
         }).catch((error) => {
@@ -29,10 +28,7 @@ function getDrawings() {
 
   return (loading? <div>LOADING...</div> :
       <>
-        <div>GALLERY</div>
          {drawing ? 
-         <>
-         <div>DRAWING: {drawingId}</div>
          <img
           alt={drawing.name}
           src={drawing.src}
@@ -40,8 +36,7 @@ function getDrawings() {
           // width="100%"
           // height="100%"
           name={drawing.name}
-         />
-         </> : null}
+         /> : <div>DRAWING NOT FOUND!</div>}
       </>
   );
 }

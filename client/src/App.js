@@ -10,7 +10,7 @@ import ErrorPage from "./pages/error";
 import { AuthProvider } from "./contexts/authContext";
 
 import "./App.css";
-import ProtectedRoutes from "./components/ProtectedRoutes/ProtectedRoutes";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   return (
@@ -20,11 +20,9 @@ function App() {
         <Routes>
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/register" element={<Register />} />
-          <Route element={<ProtectedRoutes/>}>
-            <Route exact path="/" element={<Home />} />
-            <Route exact path="/paint" element={<Paint />} />
-            <Route exact path="gallery/:drawingId" element={<Gallery />} />
-          </Route>
+          <Route exact path="/" element={<ProtectedRoute> <Home /></ProtectedRoute>}/>
+          <Route exact path="/paint" element={<ProtectedRoute> <Paint /></ProtectedRoute>}/>
+          <Route exact path="gallery/:drawingId" element={<ProtectedRoute> <Gallery /></ProtectedRoute>}/>
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </AuthProvider>
