@@ -15,6 +15,7 @@ export default function Navigation() {
           <NavLink href="/register">Register</NavLink>
         </> : 
         <>
+        <NavLink href="/">Home</NavLink>
         <NavLink href="/paint">Paint</NavLink>
         <NavLink onClick={logout} href="/login">Logout</NavLink>
         </>

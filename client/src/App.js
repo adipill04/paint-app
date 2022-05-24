@@ -22,7 +22,7 @@ function App() {
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/" element={<ProtectedRoute> <Home /></ProtectedRoute>}/>
           <Route exact path="/paint" element={<ProtectedRoute> <Paint /></ProtectedRoute>}/>
-          <Route exact path="gallery/:drawingId" element={<ProtectedRoute> <Gallery /></ProtectedRoute>}/>
+          <Route exact path="gallery/:drawingId" element={<Gallery />}/>
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </AuthProvider>

@@ -78,15 +78,28 @@ app.post('/api/uploadDrawing', async (req, res) => {
 app.get('/api/drawing/:id', async (req, res) => {
     try {
         const token = req.headers['x-access-token'];
+        let userId;
         const decodedJwt = jwt.decode(token);
-        let userId = decodedJwt['_id'];
-        let drawing = await Drawing.findOne({ _id: req.params.id, sharedWith: userId });
+        if(decodedJwt !== null) {
+            userId = decodedJwt['_id'];
+        }
+        let drawing = await Drawing.findOne({
+            $or: [
+                { _id: req.params.id, type: "public" },
+                { _id: req.params.id, type: "private", sharedWith: userId },
+                { _id: req.params.id, type: "private", owner: userId },
+            ]
+        }).exec();
+        if(drawing === null) {
+            return res.status(404).json({ error: 'Drawing not found!'});
+        }
         drawing = {
             id: drawing._id,
             name: drawing.name, 
             src: drawing.img,
             createdAt: drawing.createdAt
         }
+
         res.json({ 
             drawing,
             message: 'Drawing fetched successfully'
