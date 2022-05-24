@@ -70,7 +70,7 @@ This screen shows a gallery list of all drawings that are owned by the user and 
 
 ### Paint page [ /paint ]
 
-(insert screenshot)
+![Alt text](/screenshots/paint-page.png?raw=true "Paint Page")
 
 This screen allows the user to create drawings and save them as publicly available or private drawings. 
 
