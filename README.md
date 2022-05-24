@@ -98,22 +98,23 @@ This screen allows the user to create drawings and save them as publicly availab
 ![Alt text](/screenshots/general-architechture.drawio.png?raw=true "Paint Page")
 
 ### APIs
-
-- <span style="color: green;">POST</span> /api/register 
+```sh
+- POST /api/register 
     - body: { email, password}
-- <span style="color: green;">POST</span> /api/login
+- POST /api/login
     - body: { email, password}
-- <span style="color: green;">POST</span> /api/uploadDrawing
+- POST /api/uploadDrawing
     - header: { x-access-token }
     - body: { name, type, img, drawTime }
-- <span style="color: green;">POST</span> /api/shareDrawing
+- POST /api/shareDrawing
     - body: { userShareEmail }
-- <span style="color: blue;">GET</span> /api/drawing/:id
+- GET /api/drawing/:id
     - header: { x-access-token }
-- <span style="color: blue;">GET</span> /api/getDrawings
+- GET /api/getDrawings
     - header: { x-access-token }
-- <span style="color: red;">DELETE</span> /api/deleteDrawing/:drawingId
+- DELETE /api/deleteDrawing/:drawingId
     - header: { x-access-token }
+```
 
 ## How can I make it better?
 
