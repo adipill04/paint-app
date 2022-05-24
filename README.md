@@ -94,6 +94,27 @@ This screen allows the user to create drawings and save them as publicly availab
 - Used mongodb as persistence layer for images. Drawings are stored as a string that is Base64 encoded in png format. Prioritized the handling rasterization, it's persitence and working with rasterized drawings based on device display sizes as an enhancement.
 - Focused more on web experience than mobile experience.
 
+### General Architechture
+![Alt text](/screenshots/general-architechture.drawio.png?raw=true "Paint Page")
+
+### APIs
+
+- <span style="color: green;">POST</span> /api/register 
+    - body: { email, password}
+- <span style="color: green;">POST</span> /api/login
+    - body: { email, password}
+- <span style="color: green;">POST</span> /api/uploadDrawing
+    - header: { x-access-token }
+    - body: { name, type, img, drawTime }
+- <span style="color: green;">POST</span> /api/shareDrawing
+    - body: { userShareEmail }
+- <span style="color: blue;">GET</span> /api/drawing/:id
+    - header: { x-access-token }
+- <span style="color: blue;">GET</span> /api/getDrawings
+    - header: { x-access-token }
+- <span style="color: red;">DELETE</span> /api/deleteDrawing/:drawingId
+    - header: { x-access-token }
+
 ## How can I make it better?
 
 **Image Peristence**
