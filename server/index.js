@@ -5,6 +5,8 @@ const cors = require('cors');
 const User = require('./models/user');
 const jwt = require('jsonwebtoken');
 const Drawing = require('./models/drawing');
+const argon2 = require('argon2');
+
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
 
@@ -22,40 +24,43 @@ app.use(cors());
 
 // Routes
 app.post('/api/register', async (req, res) => {
+    const hash = await argon2.hash(req.body.password);
     try {
         await User.create({
             email: req.body.email,
-            password: req.body.password
-        })
+            password: hash
+        });
         res.json({ message: 'User registered successfully'});
     } catch (err) {
         res.json({ error: 'Duplicate email'})
     }
-    
+
 });
 
 app.post('/api/login', async (req, res) => {
     const user = await User.findOne({
         email: req.body.email,
-        password: req.body.password
-    })
-    // TODO: Change jwt secret to something bigger
+    });
     if(user) {
+        //argon2 to hash password in MongoDB
+        const valid = argon2.verify(user.password, req.body.password);
+        if (!valid) {
+            return res.json({error: 'Incorrect Password!'})
+        }
         const token = jwt.sign({
             _id: user._id,
             email: req.body.email
-        }, 'secret123');
+        }, process.env.JWT_SECRET);
         return res.json({ token: token, user: { email: req.body.email}});
     } else {
-        return res.json({ error: 'Login failed' });
-    }
-    
+        return res.json({ error: 'Email not registered!' });
+    } 
 });
 
 app.post('/api/uploadDrawing', async (req, res) => {
     try {
         const token = req.headers['x-access-token'];
-        const decodedJwt = jwt.decode(token);
+        const decodedJwt = jwt.verify(token, process.env.JWT_SECRET);
         let userId = decodedJwt['_id'];
         const { name, type, img, drawTime } = req.body;
         const drawing = new Drawing({
@@ -70,7 +75,6 @@ app.post('/api/uploadDrawing', async (req, res) => {
         const newDrawing = await drawing.save();
         res.json({ message: 'Drawing uploaded successfully'});
     } catch (err) {
-        console.log(err);
         res.json({ error: 'Drawing upload failed!'})
     }
 });
@@ -79,7 +83,7 @@ app.get('/api/drawing/:id', async (req, res) => {
     try {
         const token = req.headers['x-access-token'];
         let userId;
-        const decodedJwt = jwt.decode(token);
+        const decodedJwt = jwt.verify(token, process.env.JWT_SECRET);
         if(decodedJwt !== null) {
             userId = decodedJwt['_id'];
         }
@@ -113,7 +117,7 @@ app.get('/api/drawing/:id', async (req, res) => {
 app.get('/api/getDrawings', async (req, res) => {
     try {
         const token = req.headers['x-access-token'];
-        const decodedJwt = jwt.decode(token);
+        const decodedJwt = jwt.verify(token, process.env.JWT_SECRET);
         let userId = decodedJwt['_id'];
         let userDrawings = await Drawing.find({
             owner: userId
@@ -158,7 +162,7 @@ app.get('/api/getDrawings', async (req, res) => {
 app.delete('/api/deleteDrawing/:drawingId', async (req, res) => {
     try {
         const token = req.headers['x-access-token'];
-        const decodedJwt = jwt.decode(token);
+        const decodedJwt = jwt.verify(token, process.env.JWT_SECRET);
         let userId = decodedJwt['_id'];
         Drawing.findOneAndDelete({ _id: req.params.drawingId, owner: userId })
         .exec()
