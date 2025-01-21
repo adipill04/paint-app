@@ -6,6 +6,7 @@ const User = require('./models/user');
 const jwt = require('jsonwebtoken');
 const Drawing = require('./models/drawing');
 const argon2 = require('argon2');
+const e = require('express');
 
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
@@ -47,10 +48,12 @@ app.post('/api/login', async (req, res) => {
         if (!valid) {
             return res.json({error: 'Incorrect Password!'})
         }
+
         const token = jwt.sign({
             _id: user._id,
             email: req.body.email
-        }, process.env.JWT_SECRET);
+        }, process.env.JWT_SECRET, { expiresIn: process.env.TOKEN_EXP});
+
         return res.json({ token: token, user: { email: req.body.email}});
     } else {
         return res.json({ error: 'Email not registered!' });
@@ -75,7 +78,17 @@ app.post('/api/uploadDrawing', async (req, res) => {
         const newDrawing = await drawing.save();
         res.json({ message: 'Drawing uploaded successfully'});
     } catch (err) {
-        res.json({ error: 'Drawing upload failed!'})
+        if (err.name == 'TokenExpiredError'){
+            err = {
+                error: 'TokenExpired',
+                message: 'Session expired, please login again',
+                redirectUrl: '/login'
+            }
+            res.status(400).json(err)
+        }
+        else{
+            res.json({ error: 'Drawing upload failed!'})
+        }
     }
 });
 
@@ -109,8 +122,18 @@ app.get('/api/drawing/:id', async (req, res) => {
             message: 'Drawing fetched successfully'
         });
     } catch (err) {
-        console.log(err);
-        res.json({ error: 'Drawing fetch failed!'});
+        if (err.name == 'TokenExpiredError'){
+            err = {
+                error: 'TokenExpired',
+                message: 'Session expired, please login again',
+                redirectUrl: '/login'
+            }
+            res.status(400).json(err)
+        }
+        else{
+            console.log(err);
+            res.json({ error: 'Drawing fetch failed!'});
+        }
     }
 });
 
