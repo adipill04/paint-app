@@ -1,10 +1,15 @@
-import { useParams } from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useAuth } from "../contexts/authContext"; 
+import { handleError } from "../utils/errorHandler";
 
 const Gallery = () => {
 
   let { drawingId } = useParams(); 
+  const { logout } = useAuth();
+  const navigate = useNavigate()
+
   const [loading, setLoading] = useState(true);
   const [drawing, setDrawing] = useState(null);
 
@@ -21,8 +26,9 @@ function getDrawings() {
         }).then(response => {
             const { drawing } = response.data;
             setDrawing(drawing);
+
         }).catch((error) => {
-        console.log("ERROR: "+error);
+            handleError();
     });
 };
 

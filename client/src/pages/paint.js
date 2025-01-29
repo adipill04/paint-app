@@ -4,6 +4,9 @@ import ActionsBar from '../components/ActionsBar/ActionsBar';
 import useCounter from '../hooks/useCounter';
 import axios from 'axios';
 import PaintTools from '../components/PaintTools/PaintTools.js';
+import { useNavigate } from 'react-router';
+import { useAuth } from "../contexts/authContext"; 
+import { handleError } from '../utils/errorHandler.js';
 
 export default function Paint() {
   const [startedDrawing, setStartedDrawing] = useState(false);
@@ -15,6 +18,8 @@ export default function Paint() {
   const [currentBrushColor, setBrushColor] = useState("#000000");
   const [currentBrushSize, setBrushSize] = useState(brushSizes[0]);
   const [drawingType, setDrawingType] = useState("private");
+  const { logout } = useAuth()
+  const navigate = useNavigate()
 
   function changeTool (tool) {
     if (tool === "Brush Tool") {
@@ -79,7 +84,7 @@ export default function Paint() {
                 console.log("Image upload failed");
             }
         }).catch((error) => {
-            console.log("ERROR: "+error);
+          handleError();
         });
     }
 
