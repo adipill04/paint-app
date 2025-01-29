@@ -1,8 +1,8 @@
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from 'react-router';
 import { useAuth } from "../contexts/authContext"; 
+import { handleError } from "../utils/errorHandler";
 
 const Gallery = () => {
 
@@ -28,11 +28,7 @@ function getDrawings() {
             setDrawing(drawing);
 
         }).catch((error) => {
-        console.log("ERROR: "+error);
-        if (error.response?.status === 400 && error.response?.data?.error === 'TokenExpired'){
-            logout()
-            navigate('/login')
-        }
+            handleError();
     });
 };
 
