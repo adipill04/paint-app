@@ -6,6 +6,7 @@ import axios from 'axios';
 import PaintTools from '../components/PaintTools/PaintTools.js';
 import { useNavigate } from 'react-router';
 import { useAuth } from "../contexts/authContext"; 
+import { handleError } from '../utils/errorHandler.js';
 
 export default function Paint() {
   const [startedDrawing, setStartedDrawing] = useState(false);
@@ -83,11 +84,7 @@ export default function Paint() {
                 console.log("Image upload failed");
             }
         }).catch((error) => {
-          if (error.response?.status === 400 && error.response?.data?.error === 'TokenExpired'){
-            logout()
-            navigate('/login')
-          } 
-            console.log("ERROR: "+error);
+          handleError();
         });
     }
 
