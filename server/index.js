@@ -8,8 +8,15 @@ const Drawing = require('./models/drawing');
 const argon2 = require('argon2');
 const e = require('express');
 
+//manually create http server, attach socket io to it
+const http = require('http')
+const server = http.createServer(app)
+const { Server } = require('socket.io');
+const io = new Server(server)
+
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 
 mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
@@ -212,8 +219,19 @@ app.post('/api/shareDrawing', async (req, res) => {
     }
 });
 
+io.on('connection', (socket) => {
+    console.log('Connected to socket io server')
+
+    /// ...Add socket .on stuff
+})
+
+//On LAN
+server.listen(PORT, HOST, () =>{
+    console.log('hosting server on LAN, port ', PORT)
+})
+
 
 // Start Server
-app.listen(PORT, () => {
-    console.log('Server has started on port 1337');
-});
+// app.listen(PORT, () => {
+//     console.log('Server has started on port 1337');
+// });
